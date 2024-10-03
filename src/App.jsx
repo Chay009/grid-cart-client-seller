@@ -3,13 +3,13 @@ import { useEffect } from "react";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import Appbar from "./components/Appbar";
-import Addcourse from "./components/Addcourse";
-import Courses from "./components/Courses";
-import Course from "./components/Course";
+import AddNewProduct from "./components/AddNewProduct";
+import Products from "./components/Products";
+
 import Landing from "./components/Landing";
 import { RecoilRoot, useSetRecoilState } from "recoil";
 import { userState } from "./store/atoms/user";
-import "./components/LandingPage.css";
+
 import backgroundImg from "../public/Background.svg"
 
 function App() {
@@ -30,9 +30,9 @@ function App() {
           <Appbar />
           <InitUser />
           <Routes>
-            <Route path="/products" element={<Courses />} />
-            <Route path="/products/:productId" element={<Course />} />
-            <Route path="/addcourse" element={<Addcourse />} />
+            <Route path="/products" element={<Products />} />
+          
+            <Route path="/addproducts" element={<AddNewProduct />} />
             <Route path="/signin" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Landing />} />

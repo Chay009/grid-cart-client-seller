@@ -1,200 +1,128 @@
-import { Avatar, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { isUserLoading } from "../store/selectors/isUserLoading";
-import { userEmailState } from "../store/selectors/userEmail";
-import { userState } from "../store/atoms/user";
+
+
+
 import "/src/App.css";
+import { useEffect, useRef, useState } from "react";
 
 function Appbar() {
   const navigate = useNavigate();
-  const userLoading = useRecoilValue(isUserLoading);
-  const userEmail = useRecoilValue(userEmailState);
-  const setUser = useSetRecoilState(userState);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const avatarRef = useRef(null);
+  const handleAvatarClick = () => {
+    setShowDropdown((prev) => !prev);
+  };
 
-  // if (userLoading) {
-  //   return (
-  //     <div>
-  //       <Loading />
-  //     </div>
-  //   );
-  // }
+  // Hide dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (avatarRef.current && !avatarRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-  if (userEmail) {
-    console.log(userEmail, "useremail");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("sellerId");
+    localStorage.removeItem("sellerEmail");
+   
+    setShowDropdown(false);
+    navigate("/");
+  };
+  // Get user email from localStorage if it's available
+  const sellerEmail = localStorage.getItem("sellerEmail") 
+
+  if (sellerEmail) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: 4,
-          zIndex: 1,
-          marginTop: "8px",
-        }}
-      >
-
-
-     
+      <div className="flex justify-between items-center px-6 py-4 bg-gray-800 text-white">
+        {/* Logo / Brand Name */}
         <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            marginLeft: 10,
-            cursor: "pointer",
-          }}
+          className="flex items-center cursor-pointer"
           onClick={() => {
-            navigate("/");
+            navigate("/products");
           }}
         >
-          <Typography
-            style={{ color: "white", fontFamily: "Kaushan Script" }}
-            onClick={() => {
-              navigate("/");
-            }}
-            variant={"h6"}
-          >
-            CourseHub
-          </Typography>
+          <h3 className="text-xl font-kaushan">GridKart Admin</h3>
         </div>
-        <div style={{ display: "flex" }}>
-          <div style={{ marginRight: 10, display: "flex" }}>
-            <div style={{ marginRight: 10 }}>
-              <button
-                className="button-nav"
-                style={{ width: "100px" }}
-                onClick={() => {
-                  navigate("/addcourse");
-                }}
-              >
-                Add product
-              </button>
-            </div>
-            <div style={{ marginRight: 10 }}>
-              <button
-                className="button-nav"
-                style={{ width: "100px" }}
-                onClick={() => {
-                  navigate("/products");
-                }}
-              >
-               My products
-              </button>
-            </div>
-            <div style={{ marginRight: 10 }}>
-              <button
-                variant={"contained"}
-                className="button-btn"
-                style={{width:"90px",height:"35px"}}
-                onClick={() => {
-                  localStorage.setItem("token", null);
-                  localStorage.setItem("sellerId", null);
-                  localStorage.setItem("userEmail", null); // Clear userEmail as well
-                  setUser({
-                    isLoading: false,
-                    userEmail: null,
-                  });
-                  navigate("/"); // Redirect to the home page or any desired route
-                }}
-              >
-                Logout
-              </button>
-            </div>
 
+        {/* Navigation Buttons */}
+        <div className="flex items-center space-x-4">
+         
+          <button
+            className="bg-teal-600 hover:bg-purple-700 text-white py-2 px-4 rounded"
+            onClick={() => {
+              navigate("/products");
+            }}
+          >
+            Inventory
+          </button>
+        
 
-           <div
-              style={{
-                marginRight: "10px",
-                marginTop: "-5px",
-                marginLeft: "-5px",
-              }}
-            >
-              <Tooltip
-                componentsProps={{
-                  tooltip: {
-                    sx: {
-                      bgcolor: "common.black",
-                      "& .MuiTooltip-arrow": {
-                        color: "purple",
-                      },
-                      fontSize: "15px",
-                      border: "2px solid #601b99",
-                      padding: "5px",
-                    },
-                  },
-                }}
-                style={{ padding: "7px" }}
-                title={userEmail}
+          {/* Avatar with Tooltip */}
+          <div className="relative" ref={avatarRef}>
+              <div
+                className="w-10 h-10 bg-gradient-to-tr from-orange-300 to-red-500 rounded-full flex items-center justify-center text-white text-lg font-semibold cursor-pointer"
+                onClick={handleAvatarClick}
               >
-                <IconButton>
-                  <Avatar
-                    style={{
-                      color: "purple",
-                      backgroundColor: "whitesmoke",
-                      width: "35px",
-                      height: "35px",
-                      marginLeft:"-10px"
-                    }}
-                    src="/broken-image.jpg"
-                  />
-                </IconButton>
-              </Tooltip>
+                {localStorage.getItem("sellerEmail")[0]?.toUpperCase()}
+              </div>
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                  <div className="px-4 py-2 text-gray-800 font-medium">
+                    {localStorage.getItem("sellerEmail")}
+                  </div>
+                  <button
+                    className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition duration-200"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "10px",
-        zIndex: 1,
-        marginLeft: "20px",
-        marginRight: "20px",
-        marginTop: "8px",
-      }}
-    >
+    <div className="flex justify-between items-center px-6 py-4 bg-gray-800 text-white">
+      {/* Logo / Brand Name */}
       <div>
-        <Typography
-          style={{
-            color: "white",
-            fontFamily: "Kaushan Script",
-            cursor: "pointer",
-          }}
+        <h3
+          className="text-xl font-kaushan cursor-pointer"
           onClick={() => {
             navigate("/");
           }}
-          variant="h5"
         >
-          CourseHub
-        </Typography>
+         GridKart Admin
+        </h3>
       </div>
-      <div style={{ display: "flex" }}>
-        <div style={{ marginRight: 10 }}>
-          <button
-            className="button-nav"
-            onClick={() => {
-              navigate("/signup");
-            }}
-          >
-            Signup
-          </button>
-        </div>
-        <div>
-          <button
-            className="button-nav"
-            onClick={() => {
-              navigate("/signin");
-            }}
-          >
-            Signin
-          </button>
-        </div>
+
+      {/* Sign In / Sign Up Buttons */}
+      <div className="flex items-center space-x-4">
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          onClick={() => {
+            navigate("/signup");
+          }}
+        >
+          Signup
+        </button>
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded"
+          onClick={() => {
+            navigate("/signin");
+          }}
+        >
+          Signin
+        </button>
       </div>
     </div>
   );

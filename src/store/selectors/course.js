@@ -56,9 +56,9 @@ export const productImage = selector({
   get: ({ get }) => {
     const state = get(productState);
 
-    if (state.product && state.product.image) {
+    if (state.product && state.product.imageLink) {
       // Assuming that the 'image' property is a valid URL or base64 string
-      return state.product.image;
+      return state.product.imageLink;
     }
 
     // Return a default image or handle the case where the image is not found
