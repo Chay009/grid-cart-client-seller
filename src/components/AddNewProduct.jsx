@@ -65,7 +65,7 @@ function AddNewProduct() {
      
 
       await axios.post(
-        `http://localhost:2424/admin/create-products/${sellerId}`,
+        `${import.meta.env.VITE_SERVER_URL}/admin/create-products/${sellerId}`,
         {
           ...formData,
           price: parseFloat(formData.price),

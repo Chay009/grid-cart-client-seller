@@ -47,7 +47,7 @@ function InitUser() {
   const setUser = useSetRecoilState(userState);
   const init = async () => {
     try {
-      const response = await axios.get("http://localhost:2424/admin/me", {
+      const response = await axios.get(`${import.meta.env.VITE_SERVER_URL}/admin/me`, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },

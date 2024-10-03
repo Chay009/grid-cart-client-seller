@@ -18,7 +18,7 @@ const navigate=useNavigate();
       try {
         const sellerId = localStorage.getItem('sellerId');
         const response = await axios.get(
-          `http://localhost:2424/admin/get-products/${sellerId}`,
+          `${import.meta.env.VITE_SERVER_URL}/admin/get-products/${sellerId}`,
           {
             headers: {
               Authorization: "Bearer " + localStorage.getItem("token"),
